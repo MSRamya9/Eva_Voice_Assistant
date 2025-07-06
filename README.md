@@ -3,7 +3,7 @@
 Eva is a smart, voice-enabled assistant built with Python and Flask. She can chat, tell jokes, fetch weather updates, answer questions using GPT, and even remind you to drink water — all through a sleek web interface or terminal mode.
 
 <p align="center">
-  <img src="https://github.com/MSRamya9/Eva_Voice_Assistant/static/assets/eva_ss.jpg" alt="Eva Voice Assistant Demo" width="600"/>
+  <img src="D:\Github Projects\Eva\static\assets\eva_ss.jpg" alt="Eva Voice Assistant Demo" width="600"/>
 </p>
 
 ---
