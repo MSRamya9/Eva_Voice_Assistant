@@ -36,7 +36,7 @@ Eva is a smart, voice-enabled assistant built with Python and Flask. She can cha
 
 ## 📁 Project Structure
 
-```plaintext
+<pre>
 Eva_Voice_Assistant/
 ├── assistant.py         # Core assistant logic
 ├── server.py            # Flask web server and API endpoints
@@ -46,5 +46,94 @@ Eva_Voice_Assistant/
 ├── requirements.txt     # Python dependencies
 ├── .env                 # API keys (not committed)
 └── README.md
+</pre>
+---
+
+## 🚀 Getting Started
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/yourusername/Eva_Voice_Assistant.git
+cd Eva_Voice_Assistant
+```
+###  2: Create and Activate Virtual Environment
+```bash
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+```
+### 3. Install Dependencies
+```bash
+pip install -r requirements.txt
+```
+### 4. Set Up Environment Variables
+Create a .env file in the root directory
+```bash
+OPENAI_API_KEY=your_openai_key
+OPENWEATHER_KEY=your_openweather_key
+NEWSAPI_KEY=your_newsapi_key
+```
+---
+## 🧪 Usage
+### ▶️ Run in Terminal Mode
+```bash
+python server.py
+```
+Eva will respond via terminal and speak using pyttsx3.
+### 🌐 Run in Web Mode
+```bash
+python main.py web
+```
+Then open http://localhost:5000 in your browser.
+
+---
+## 💬 Example Commands
+- “Tell me a joke”
+
+- “What’s the weather in New York?”
+
+- “Who is Ada Lovelace?”
+
+- “Remind me to drink water in 30 minutes”
+
+- “Play a game”
+
+- "Open To-do List" 
+
+- “Thank you”
+
+---
+
+## 🔐 API Keys Required
+
+| API             | Purpose                | Get Key From                                               |
+|------------------|-------------------------|-------------------------------------------------------------|
+| OpenAI API       | GPT-based responses     | [OpenAI API Keys](https://platform.openai.com/account/api-keys) |
+| OpenWeatherMap   | Weather updates         | [OpenWeatherMap](https://openweathermap.org/api)           |
+| NewsAPI          | News headlines          | [NewsAPI](https://newsapi.org)                             |
 
 
+---
+## 🤝 Contributing
+Pull requests are welcome! If you have ideas for new features or improvements, feel free to fork the repo and submit a PR.
+
+---
+## 📜 License
+This project is licensed under the MIT License.
+
+---
+## 🙌 Acknowledgments
+- OpenAI
+
+- OpenWeatherMap
+
+- NewsAPI
+
+- Wikipedia API
+
+- pyttsx3
+
+- Flask
+
+---
+## Built with 💡 and a lot of curiosity by Sai
