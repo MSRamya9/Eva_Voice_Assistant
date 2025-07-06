@@ -447,9 +447,6 @@ class EvaTerminalAssistant:
         # 📋 Route to To-Do List handler
         if self.todo_mode or "to-do list" in command or 'todo' in command or'todo list' in command or any(word in command for word in ["add", "remove", "view"]):
             return self.handle_todo_list(command)
-        if "thank you" in command or "thanks" in command or "thank you so much in command":
-            self.speak("You're very welcome! I'm always here to help.")
-            return
 
         elif 'who is' in command or 'tell me about' in command or 'what do you know about' in command:
          return self.handle_who_is(command)
