@@ -1,182 +1,182 @@
-// static/script.js
 document.addEventListener("DOMContentLoaded", () => {
-  console.log("🐛 script.js has loaded");
+  console.log("✅ Fixed script.js loaded");
 
   const chatBox   = document.getElementById("chat-box");
   const userInput = document.getElementById("user-input");
   const sendBtn   = document.getElementById("send-btn");
   const micBtn    = document.getElementById("mic-btn");
+  speak("Hello! I'm Eva, your voice assistant. Ready to chat?")
 
-// 🧠 Send message to Eva
-sendBtn.addEventListener('click', async () => {
-  const message = userInput.value.trim();
-  if (!message) return;
+  let lastMessageCount = 0;
 
-  appendMessage('You', message);
-  userInput.value = '';
-
-  const res = await fetch('/api/chat', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ message })
-  });
-
-  const replies = await res.json();
-  replies.forEach(reply => appendMessage('Eva', reply));
-});
-
-// 🔁 Poll for reminders and updates every 5 seconds
-let lastMessageCount = 0;
-
-setInterval(async () => {
-  const res = await fetch('/api/history');
-  const history = await res.json();
-
-  if (history.length > lastMessageCount) {
-    const newMessages = history.slice(lastMessageCount);
-    newMessages.forEach(entry => {
-      if (entry.user) {
-        appendMessage('You', entry.user);
-      } else if (entry.eva) {
-        appendMessage('Eva', entry.eva);
-
-        // ✅ Speak reminders immediately when they arrive
-        if (entry.eva.includes("⏰ Reminder")) {
-          speak(entry.eva);
-        }
-      }
-    });
-    lastMessageCount = history.length;
-  }
-}, 2000); // Poll every 2 seconds
-
-
-// 🧱 Helper to append messages
-function appendMessage(sender, text) {
-  const msgDiv = document.createElement('div');
-  msgDiv.className = sender.toLowerCase();
-  msgDiv.innerHTML = `<strong>${sender}:</strong> ${text}`;
-  chatBox.appendChild(msgDiv);
-  chatBox.scrollTop = chatBox.scrollHeight;
-
-  if (sender === 'Eva' && text.includes("⏰ Reminder")) {
-    speak(text); // 🗣️ Speak all Eva responses
-  }
-}
-
-  // ✅ Load chat history from the server
+  // 🛠️ Load chat history cleanly at startup
   fetch("/api/history")
     .then(res => res.json())
     .then(history => {
-      history.forEach(([sender, message]) => {
-        appendMessage(sender, message);
+      lastMessageCount = history.length;
+      history.forEach(entry => {
+        if (entry.user) appendMessage("You", entry.user);
+        if (entry.eva)  appendMessage("Eva", entry.eva);
       });
-    })
-    .catch(err => {
-      console.error("🐛 Failed to load chat history:", err);
     });
 
-  // 🧠 Append message to chat
-  function appendMessage(sender, message) {
-    const msg = document.createElement("div");
-    msg.innerHTML = `<strong>${sender}:</strong> ${message}`;
-    chatBox.appendChild(msg);
-    chatBox.scrollTop = chatBox.scrollHeight;
-  }
+  // 🔄 Poll only for new messages every 2 seconds
+  setInterval(async () => {
+    const res = await fetch("/api/history");
+    const history = await res.json();
 
- function speak(text) {
-  if (!("speechSynthesis" in window)) return;
+    if (history.length > lastMessageCount) {
+      const newMessages = history.slice(lastMessageCount);
+      newMessages.forEach(entry => {
+        if (entry.eva)  appendMessage("Eva", entry.eva);
+      });
+      lastMessageCount = history.length;
+    }
+  }, 2000);
 
-  const synth = window.speechSynthesis;
-  const utterance = new SpeechSynthesisUtterance(text);
-  utterance.lang = "en-US";
-  utterance.rate = 1;
+  // 💬 Add message bubble to chat
+  function appendMessage(sender, text) {
+  const msgWrapper = document.createElement("div");
+  msgWrapper.classList.add("message-wrapper");
 
-  const setVoiceAndSpeak = () => {
-    const voices = synth.getVoices();
-    const preferredVoice = voices.find(v =>
-      v.name.toLowerCase().includes("female") ||
-      v.name.toLowerCase().includes("zira") ||
-      v.name.toLowerCase().includes("samantha") ||
-      v.name.toLowerCase().includes("linda") ||
-      v.name.toLowerCase().includes("karen")
-    );
-    if (preferredVoice) utterance.voice = preferredVoice;
-    synth.speak(utterance);
-  };
+  const avatar = document.createElement("img");
+  avatar.classList.add("avatar");
 
-  if (synth.getVoices().length === 0) {
-    synth.addEventListener("voiceschanged", setVoiceAndSpeak);
+  // Assign appropriate avatar and class
+  if (sender === "Eva") {
+    avatar.classList.add("eva-avatar");
+    avatar.src = "/static/assets/eva-avatar.png";
   } else {
-    setVoiceAndSpeak();
+    avatar.src = "/static/assets/user-avatar.png";
   }
+
+  const msgDiv = document.createElement("div");
+  msgDiv.classList.add("message");
+  msgDiv.classList.add(sender === "Eva" ? "eva-bubble" : "user-bubble");
+  msgDiv.textContent = text;
+
+  const timestamp = document.createElement("div");
+  timestamp.classList.add("timestamp");
+  timestamp.textContent = new Date().toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit"
+  });
+
+  // Message layout: avatar + bubble + timestamp
+  if (sender === "Eva") {
+    msgWrapper.style.justifyContent = "flex-start";
+    msgWrapper.appendChild(avatar);
+    msgWrapper.appendChild(msgDiv);
+    msgWrapper.appendChild(timestamp);
+
+    // Nod animation on reply
+    avatar.classList.add("nod");
+    setTimeout(() => avatar.classList.remove("nod"), 700);
+  } else {
+    msgWrapper.style.justifyContent = "flex-end";
+    msgWrapper.appendChild(timestamp);
+    msgWrapper.appendChild(msgDiv);
+    msgWrapper.appendChild(avatar);
+  }
+
+  chatBox.appendChild(msgWrapper);
+  chatBox.scrollTop = chatBox.scrollHeight;
 }
 
 
 
-  // 🚀 Send message to Flask backend
-  async function submitInput() {
-    console.log("🐛 submitInput fired");
-    const text = userInput.value.trim();
-    if (!text) {
-      console.log("🐛 no text to send");
-      return;
+  // 🗣️ Text-to-speech for Eva
+  function speak(text) {
+    if (!("speechSynthesis" in window)) return;
+
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = "en-US";
+    utterance.rate = 1;
+
+    const synth = window.speechSynthesis;
+    const setVoiceAndSpeak = () => {
+      const voices = synth.getVoices();
+      const preferred = voices.find(v =>
+        ["female", "samantha", "zira", "linda", "karen"].some(name =>
+          v.name.toLowerCase().includes(name)
+        )
+      );
+      if (preferred) utterance.voice = preferred;
+      synth.speak(utterance);
+    };
+
+    if (synth.getVoices().length === 0) {
+      synth.addEventListener("voiceschanged", setVoiceAndSpeak);
+    } else {
+      setVoiceAndSpeak();
     }
+  }
+
+  // 🚀 Send message to backend
+  async function submitInput() {
+    const text = userInput.value.trim();
+    if (!text) return;
 
     appendMessage("You", text);
     userInput.value = "";
 
+    // Show Eva typing indicator
+    const typingDiv = document.createElement("div");
+    typingDiv.classList.add("typing-indicator");
+    typingDiv.innerHTML = "<span></span><span></span><span></span>";
+    chatBox.appendChild(typingDiv);
+    chatBox.scrollTop = chatBox.scrollHeight;
+
     try {
-      console.log("🐛 Sending POST to /api/chat");
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message: text })
       });
 
-      console.log("🐛 Got HTTP status", res.status);
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-
       const replies = await res.json();
-      console.log("🐛 JSON response:", replies);
+
+      chatBox.removeChild(typingDiv);  // 💨 Remove animation
 
       replies.forEach(reply => {
         appendMessage("Eva", reply);
-        speak(reply); // 🗣️ Speak each reply
+        speak(reply);
       });
     } catch (err) {
-      console.error("🐛 Fetch error:", err);
-      appendMessage("Eva", "Sorry, I can't reach the server right now.");
-      speak("Sorry, I can't reach the server right now.");
+      console.error("❌ Chat error:", err);
+      chatBox.removeChild(typingDiv);
+
+      const fallback = "Sorry, I can't reach the server right now.";
+      appendMessage("Eva", fallback);
+      speak(fallback);
     }
   }
 
-  // 🎙️ Start voice recognition
-  function startListening() {
-    console.log("🐛 startListening fired");
 
+  // 🎙️ Voice recognition
+  function startListening() {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) {
-      appendMessage("Eva", "Sorry, your browser doesn't support speech recognition.");
+      appendMessage("Eva", "Speech recognition not supported.");
       return;
     }
 
     const recognition = new SpeechRecognition();
     recognition.lang = "en-US";
     recognition.interimResults = false;
-    recognition.maxAlternatives = 1;
 
     recognition.start();
+    micBtn.classList.add("glowing");
 
     recognition.onresult = event => {
+      micBtn.classList.remove("glowing");
       const transcript = event.results[0][0].transcript;
-      console.log("🐛 transcript:", transcript);
       userInput.value = transcript;
       submitInput();
     };
 
-    recognition.onerror = event => {
-      console.error("🐛 Speech recognition error:", event.error);
+    recognition.onerror = () => {
+      micBtn.classList.remove("glowing");
       appendMessage("Eva", "Sorry, I couldn't hear you.");
       speak("Sorry, I couldn't hear you.");
     };
@@ -184,13 +184,11 @@ function appendMessage(sender, text) {
 
   // 🎯 Event listeners
   sendBtn.addEventListener("click", submitInput);
-
   userInput.addEventListener("keydown", e => {
     if (e.key === "Enter") {
       e.preventDefault();
       submitInput();
     }
   });
-
   micBtn.addEventListener("click", startListening);
 });
