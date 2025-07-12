@@ -4,31 +4,43 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Eva – Your Voice Assistant</title>
+
+  <!-- Styles -->
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&family=Quicksand&display=swap" rel="stylesheet">
 </head>
 <body>
+  <!-- 🧠 Hero Section -->
   <header class="parallax">
     <h1>Meet Eva</h1>
     <p>Your futuristic voice assistant</p>
   </header>
 
-
+  <!-- 💬 Main Chat Section -->
   <main>
     <section class="chat-section">
-      <div id="chat-box"></div>
+      <div id="chat-box" class="chat-box">
+        <!-- Dynamic messages will appear here -->
+      </div>
+
       <div class="input-area">
         <input id="user-input" type="text" placeholder="Type your message…" autocomplete="off" />
+
+        <!-- 🎤 Mic Button with Glow -->
         <button id="mic-btn" title="Speak">🎤</button>
+
+        <!-- 📨 Send Button -->
         <button id="send-btn">Send</button>
       </div>
     </section>
   </main>
 
+  <!-- ⚙️ Footer -->
   <footer>
     <p>© 2025 Eva Assistant. All rights reserved.</p>
   </footer>
 
+  <!-- Scripts -->
   <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>
