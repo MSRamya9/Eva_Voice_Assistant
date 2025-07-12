@@ -294,7 +294,7 @@ class EvaTerminalAssistant:
 
         if person:
             try:
-                summary = wikipedia.summary(person, sentences=3)
+                summary = wikipedia.summary(person, sentences=2)
                 self.speak(summary)
             except wikipedia.exceptions.DisambiguationError as e:
                 self.speak(f"There are multiple results for {person}. Can you be more specific?")
