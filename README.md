@@ -77,12 +77,13 @@ NEWSAPI_KEY=your_newsapi_key
 ## 🧪 Usage
 ### ▶️ Run in Terminal Mode
 ```bash
-python server.py
+python assistant.py
 ```
 Eva will respond via terminal and speak using pyttsx3.
 ### 🌐 Run in Web Mode
 ```bash
-python main.py web
+python server.py
+
 ```
 Then open http://localhost:5000 in your browser.
 
@@ -100,7 +101,6 @@ Then open http://localhost:5000 in your browser.
 
 - "Open To-do List" 
 
-- “Thank you”
 
 ---
 
